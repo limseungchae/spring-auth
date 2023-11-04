@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 @RestController
@@ -52,6 +53,23 @@ public class AuthController {
         }
     }
 
+    // HttpServletRequest 에서 Cookie Value : JWT 가져오기
+    public String getTokenFromRequest(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        if(cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
+                    try {
+                        return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
+                    } catch (UnsupportedEncodingException e) {
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     // HttpSession 생성
     @GetMapping("/create-session")
     public String createSession(HttpServletRequest req) {
@@ -70,7 +88,8 @@ public class AuthController {
         // 세션이 존재할 경우 세션 반환, 없을 경우 null 반환
         HttpSession session = req.getSession(false);
 
-        String value = (String) session.getAttribute(AUTHORIZATION_HEADER); // 가져온 세션에 저장된 Value 를 Name 을 사용하여 가져옵니다.
+        String value = (String) session.getAttribute(AUTHORIZATION_HEADER);
+        // 가져온 세션에 저장된 Value 를 Name 을 사용하여 가져옵니다.
         System.out.println("value = " + value);
 
         return "getSession : " + value;
