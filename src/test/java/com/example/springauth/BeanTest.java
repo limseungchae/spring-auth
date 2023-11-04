@@ -8,8 +8,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class BeanTest {
 
     @Autowired
-    Food pizza;
-
-    @Autowired
-    Food chicken;
+    Food food;
 }
