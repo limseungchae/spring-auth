@@ -35,12 +35,12 @@ public class AuthController {
     }
 
     // 쿠키 생성
-    public static void addCookie(String cookieValue, HttpServletResponse res) {
+    public static void addCookie(String token, HttpServletResponse res) {
         try {
-            cookieValue = URLEncoder.encode(cookieValue, "utf-8").replaceAll("\\+", "%20");
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
             // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
-            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, cookieValue); // Name-Value
+            Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
             cookie.setPath("/"); // 쿠키 범위
             cookie.setMaxAge(30 * 60); // 만료시간 : 30분
 
