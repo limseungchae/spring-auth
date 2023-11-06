@@ -1,5 +1,7 @@
 package com.example.springauth.util;
 
+import com.example.springauth.entity.UserRoleEnum;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Base64;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
@@ -35,6 +38,19 @@ public class JwtUtil {
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
+    }
+
+    // 토큰 생성
+    public String createToken(String username, UserRoleEnum role) {
+        Date date = new Date();
+        return BEARER_PREFIX +
+                Jwts.builder()
+                        .setSubject(username) // 사용자 식별자값(ID)
+                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                        .setIssuedAt(date) // 발급일
+                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                        .compact();
     }
 
 }
